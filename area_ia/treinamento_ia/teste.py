@@ -2,10 +2,11 @@
 # dar enter ou espaço para sair
 
 import turtle
+from tkinter import PhotoImage
 from PIL import Image
 
 
-HOSPITAL = 0
+HOSPITAL = 33
 
 
 def get_mouse_click_coor(x, y):
@@ -49,9 +50,8 @@ def space():
     tartaruga.screen.getcanvas().postscript(file=f"img_eps/map{HOSPITAL}.eps")
 
     imagem = Image.open(f"img_eps/map{HOSPITAL}.eps")
+    imagem = imagem.resize((250, 250))
     imagem.save(f"img_cont_png/map{HOSPITAL}.png")
-
-    HOSPITAL += 1
 
 
 def branco():
@@ -74,12 +74,15 @@ pontos = []
 poligonos = []
 cor = []
 
-largura, altura = 250, 250
+largura, altura = 1000, 1000
 screen = turtle.Screen()
 screen.setup(largura, altura)
+larger = PhotoImage(file="img_trein/map33.gif").zoom(4, 4)
+screen.addshape("img", turtle.Shape("image", larger))
+
+t1 = turtle.Turtle("img")
 
 tartaruga = turtle.Turtle()
-tartaruga.shape("turtle")
 
 tartaruga.penup()
 tartaruga.pensize(2)
@@ -87,8 +90,11 @@ tartaruga.shape('blank')
 tartaruga.pencolor("black")
 
 
-tela = turtle.Screen()
-tela.bgpic("img_trein/map0.gif")
+# tela = turtle.Screen()
+# imagem = PhotoImage(file="img_trein/map11.gif")
+# # tela.bgpic("img_trein/map11.gif")
+# tela.bgpic(imagem)
+
 turtle.onscreenclick(get_mouse_click_coor)
 turtle.listen()
 turtle.onkey(space, 'space')
