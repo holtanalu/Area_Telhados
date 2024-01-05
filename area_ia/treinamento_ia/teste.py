@@ -6,7 +6,7 @@ from tkinter import PhotoImage
 from PIL import Image
 
 
-HOSPITAL = 33
+HOSPITAL = 216
 
 
 def get_mouse_click_coor(x, y):
@@ -77,7 +77,7 @@ cor = []
 largura, altura = 1000, 1000
 screen = turtle.Screen()
 screen.setup(largura, altura)
-larger = PhotoImage(file="img_trein/map33.gif").zoom(4, 4)
+larger = PhotoImage(file=f"img_trein/map{HOSPITAL}.gif").zoom(4, 4)
 screen.addshape("img", turtle.Shape("image", larger))
 
 t1 = turtle.Turtle("img")
