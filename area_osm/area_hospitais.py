@@ -23,7 +23,7 @@ def cria_dicionario(poligono):
     return dicionario
 
 
-def contorno_propriedade(lat, lon):
+def obtem_contorno_propriedade(lat, lon):
     tags = {'amenity': True, "addr:street": True}
     coordenadas = [lat, lon]
 
@@ -57,7 +57,7 @@ def obtem_area_telhado(lat, lon, mapa):
 
     predios = ox.geometries_from_point(coordenadas, tags, dist=300)
     predios = predios[predios.geom_type == 'Polygon'][:2000]
-    propriedade = contorno_propriedade(lat, lon)
+    propriedade = obtem_contorno_propriedade(lat, lon)
 
     for i, pol in enumerate(predios['geometry']):
         if propriedade is not None and propriedade.contains(pol):
