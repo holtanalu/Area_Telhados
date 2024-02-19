@@ -6,6 +6,7 @@ class Retangulo:
         self.extremos = []
         self.eixos = []
         self.area = area
+        self.origem = 0
 
 
 def normaliza_vec(vetor):
@@ -60,4 +61,5 @@ def minima_bbox(poligono_convexo):
             ext_4 = (eixo_u*max_u) + (eixo_v*max_v) + origem
             retangulo.extremos = [ext_1, ext_2, ext_4, ext_3]
             retangulo.eixos = [eixo_u, eixo_v]
+            retangulo.origem = origem
     return retangulo

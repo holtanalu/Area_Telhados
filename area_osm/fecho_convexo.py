@@ -6,9 +6,6 @@
 
 # classe de ponto com x, y como ponto
 
-import osmnx as ox
-from shapely.geometry import Point
-
 
 def indice_esquerda(points):
 
@@ -96,15 +93,3 @@ def convexHull(points, n):
         # print(points[each][0], points[each][1])
 
     return pol_convexo
-
-
-def obtem_contorno_propriedade(lat, lon):
-    tags = {'amenity': True, "addr:street": True}
-    coordenadas = [lat, lon]
-
-    predios = ox.geometries_from_point(coordenadas, tags, dist=300)
-    predios = predios[predios.geom_type == 'Polygon'][:2000]
-
-    for pol in predios['geometry']:
-        if pol.contains(Point(lon, lat)):
-            return pol

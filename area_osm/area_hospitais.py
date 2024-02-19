@@ -87,7 +87,7 @@ def cria_tabela_areas(tabela):
         lat = hospitais['LATITUDE'].iloc[linha]
         lon = hospitais['LONGITUDE'].iloc[linha]
 
-        lugar = Nominatim(user_agent="myGeocoder").reverse(f"{lat}, {lon}")
+        lugar = Nominatim(user_agent="battaaaa").reverse(f"{lat}, {lon}")
         endereco = lugar.raw['address']
 
         lat_virgula = num_para_string_com_virgula(lat)
