@@ -52,10 +52,9 @@ def coloca_paineis(dimensoes, poligono, mapa):
     lon, lat = poligono.exterior.coords.xy
     pontos = list(zip(lon, lat))
     poligono_convexo = fc.convexHull(pontos, len(pontos))
-    desenha_pol(mapa, poligono_convexo, "yellow")
+    desenha_pol(mapa, poligono_convexo, "orange")
 
     retangulo = min_bbox.minima_bbox(poligono_convexo)
-    print(retangulo.extremos)
     desenha_pol(mapa, retangulo.extremos, "green")
 
     ponto_inicial = retangulo.extremos[0]

@@ -9,6 +9,14 @@ class Retangulo:
         self.origem = 0
 
 
+def existem_pontos_iguais(lista_de_pontos):
+    for i in range(len(lista_de_pontos)):
+        for j in range(i + 1, len(lista_de_pontos)):
+            if lista_de_pontos[i] == lista_de_pontos[j]:
+                return True
+    return False
+
+
 def normaliza_vec(vetor):
     return vetor / np.linalg.norm(vetor)
 
@@ -26,10 +34,13 @@ def cria_vetor(vetor1, vetor2):
 def minima_bbox(poligono_convexo):
     retangulo = Retangulo(1e8)
     n = len(poligono_convexo)
+
     for i in range(n):
         # Criando novo sistema de coordenadas
         origem = poligono_convexo[i]
         eixo_u = cria_vetor(poligono_convexo[(i+1) % n], origem)
+        if np.linalg.norm(eixo_u) == 0:
+            continue
         eixo_u = normaliza_vec(eixo_u)
         eixo_v = np.array([eixo_u[1], -eixo_u[0]])
 

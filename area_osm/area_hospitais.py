@@ -75,7 +75,7 @@ def obtem_area_telhado(lat, lon, mapa):
 
 def cria_tabela_areas(tabela):
     tabela_completa = open('tabelas/tabela_revisada.txt', 'w')
-    mapa = folium.Map([-22.041695112321737, -48.59185325493342], zoom_start=8, tiles='CartoDb dark_matter')
+    mapa = folium.Map([-22.041695112321737, -48.59185325493342], zoom_start=8, max_zoom=30, tiles='CartoDb dark_matter')
 
     hospitais = pd.read_csv(tabela)
     tabela_completa.write('NOME;LATITUDE;LONGITUDE;CIDADE;AREA PROPRIEDADE;\
