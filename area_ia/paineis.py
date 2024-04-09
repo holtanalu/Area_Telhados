@@ -99,7 +99,7 @@ def segmentacao(imagem):
                 # Achar minima B_box
                 caixa = Retangulo(float("inf"))
                 for k in range(90):
-                    borda_rotacionada = rotaciona_contorno(borda, (np.pi * float(k))/180)  
+                    borda_rotacionada = rotaciona_contorno(borda, (np.pi * float(k))/180)
                     b_box = encontra_b_box(borda_rotacionada)
                     area = (b_box[2] - b_box[0])*(b_box[3] - b_box[1])
                     if area < caixa.area:
@@ -107,7 +107,6 @@ def segmentacao(imagem):
                         caixa.extremos = [(b_box[0], b_box[1]), (b_box[0], b_box[3]), (b_box[2], b_box[3]), (b_box[2], b_box[1])]
                         caixa.angulo = (np.pi * float(k))/180
                         caixa.lados = [(b_box[2] - b_box[0]), (b_box[3] - b_box[1])]
-                
                 extremos_rotacionados = rotaciona_contorno(caixa.extremos, -caixa.angulo)
 
                 # Desenha a caixa
@@ -115,35 +114,35 @@ def segmentacao(imagem):
                 plt.plot([extremos_rotacionados[1][1], extremos_rotacionados[2][1]], [extremos_rotacionados[1][0], extremos_rotacionados[2][0]], 'w')
                 plt.plot([extremos_rotacionados[2][1], extremos_rotacionados[3][1]], [extremos_rotacionados[2][0], extremos_rotacionados[3][0]], 'w')
                 plt.plot([extremos_rotacionados[3][1], extremos_rotacionados[0][1]], [extremos_rotacionados[3][0], extremos_rotacionados[0][0]], 'w')
-
+       
                 eixos = rotaciona_contorno([[1, 0], [0, 1]], -caixa.angulo)
                 eixos = [np.array(e) for e in eixos]
                 ponto_inicial = np.array(extremos_rotacionados[0])
-                num_linhas = 0
-                l = 0
+
+                limite_horizontal = 1.2*tam_painel[0]
+                limite_vertical = 0
                 while True:
-                    l += 1
                     desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
-                    ponto_inicial += 1.2*tam_painel[0]*eixos[0]
-                    limite = ponto_inicial + tam_painel[0]*eixos[0]
-                    if limite[0]*eixos[0][0] + limite[1]*eixos[0][1] > caixa.lados[1]:
-                        num_linhas += 1
-                        ponto_inicial = np.array(extremos_rotacionados[0]) + num_linhas*1.5*tam_painel[1]*eixos[1]
-                        limite = ponto_inicial + tam_painel[1]*eixos[1]
-                        if limite[0]*eixos[1][0] + limite[1]*eixos[1][1] > caixa.lados[0]:
+                    limite_vertical += 1.2*tam_painel[1]
+                    if limite_vertical + tam_painel[1] > caixa.lados[1]:
+                        ponto_inicial = np.array(extremos_rotacionados[0]) + limite_horizontal*eixos[0]
+                        if limite_horizontal > caixa.lados[0]:
                             break
-                print(f"rodou {l} vezes")
-                
+                        desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
+                        limite_horizontal += 1.2*tam_painel[0]
+                        limite_vertical = 1.2*tam_painel[1]
+                    ponto_inicial = ponto_inicial+(1.2*tam_painel[1])*(eixos[1])
+
 
 def desenha_painel(tam_painel_pixel, ponto_inicial, eixo_1, eixo_2):
     p0 = ponto_inicial
     p1 = eixo_1*tam_painel_pixel[0] + p0
     p2 = eixo_2*tam_painel_pixel[1] + p0
     p3 = p1 + p2 - p0
-    plt.plot([p0[1], p1[1]], [p0[0], p1[0]], 'g', linewidth=5)
-    plt.plot([p1[1], p3[1]], [p1[0], p3[0]], 'g', linewidth=5)
-    plt.plot([p3[1], p2[1]], [p3[0], p2[0]], 'g', linewidth=5)
-    plt.plot([p2[1], p0[1]], [p2[0], p0[0]], 'g', linewidth=5)
+    plt.plot([p0[1], p1[1]], [p0[0], p1[0]], 'g')
+    plt.plot([p1[1], p3[1]], [p1[0], p3[0]], 'g')
+    plt.plot([p3[1], p2[1]], [p3[0], p2[0]], 'g')
+    plt.plot([p2[1], p0[1]], [p2[0], p0[0]], 'g')
 
 
 # def coloca_paines(caixa):
