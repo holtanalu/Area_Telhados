@@ -4,8 +4,8 @@ import math
 import cv2
 import sys
 
-LARGURA = 2.256  # unidade: m
-ALTURA = 1.133  # unidade: m
+LARGURA = 2.56  # unidade: m
+ALTURA = 1.33  # unidade: m
 
 cores = [[0, 191, 255], [124, 252, 0], [210, 105, 30], [255, 0, 0], [0, 100, 0], \
          [70, 130, 180], [102, 205, 170], [210, 105, 30], [238, 130, 238], [255, 160, 122]]
@@ -22,6 +22,7 @@ class Retangulo:
 def metros_para_pixels(valor_metros, lat_cen, zoom):
     circ_terra = 40075000
     metros_por_pixel = (np.cos(np.pi*lat_cen/180)*circ_terra)/(np.power(2, 8 + zoom))
+    print(metros_por_pixel*250)
     return valor_metros/metros_por_pixel
 
 
@@ -75,8 +76,8 @@ def rotaciona_contorno(lista_borda, angulo):
 # Função para segmentar a imagem em ilhas
 def segmentacao(imagem):
     n = 0
-    alt_pixel = metros_para_pixels(ALTURA, -22.328863, 18)
-    lar_pixel = metros_para_pixels(LARGURA, -22.328863, 18)
+    alt_pixel = metros_para_pixels(ALTURA, -22.328863, 19)
+    lar_pixel = metros_para_pixels(LARGURA, -22.328863, 19)
 
     tam_painel = np.array([alt_pixel, lar_pixel])
 
@@ -115,23 +116,48 @@ def segmentacao(imagem):
                 plt.plot([extremos_rotacionados[2][1], extremos_rotacionados[3][1]], [extremos_rotacionados[2][0], extremos_rotacionados[3][0]], 'w')
                 plt.plot([extremos_rotacionados[3][1], extremos_rotacionados[0][1]], [extremos_rotacionados[3][0], extremos_rotacionados[0][0]], 'w')
        
+                espacamento_horizontal = 1.5*tam_painel[0]
+                espacamento_vertical = 1.1*tam_painel[1]
+
                 eixos = rotaciona_contorno([[1, 0], [0, 1]], -caixa.angulo)
                 eixos = [np.array(e) for e in eixos]
+                print(tam_painel)
                 ponto_inicial = np.array(extremos_rotacionados[0])
-
-                limite_horizontal = 1.2*tam_painel[0]
+                limite_horizontal = espacamento_horizontal
                 limite_vertical = 0
+                num_paineis = 0
                 while True:
-                    desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
-                    limite_vertical += 1.2*tam_painel[1]
+                    if verifica_painel(imagem, tam_painel, ponto_inicial, eixos[0], eixos[1]):
+                        desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
+                        num_paineis += 1
+                    limite_vertical += espacamento_vertical
                     if limite_vertical + tam_painel[1] > caixa.lados[1]:
                         ponto_inicial = np.array(extremos_rotacionados[0]) + limite_horizontal*eixos[0]
                         if limite_horizontal > caixa.lados[0]:
                             break
-                        desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
-                        limite_horizontal += 1.2*tam_painel[0]
-                        limite_vertical = 1.2*tam_painel[1]
-                    ponto_inicial = ponto_inicial+(1.2*tam_painel[1])*(eixos[1])
+                        if verifica_painel(imagem, tam_painel, ponto_inicial, eixos[0], eixos[1]):
+                            desenha_painel(tam_painel, ponto_inicial, eixos[0], eixos[1])
+                            num_paineis += 1
+                        limite_horizontal += espacamento_horizontal
+                        limite_vertical = espacamento_vertical
+                    ponto_inicial = ponto_inicial+(espacamento_vertical)*(eixos[1])
+                print(f"Foram colocados {num_paineis} paineis")
+
+
+def ponto_invalido(imagem, x, y):
+    i = int(x)
+    j = int(y)
+    return imagem[i][j][0] == 84 and imagem[i][j][1] == 1 and imagem[i][j][2] == 68 
+
+
+def verifica_painel(imagem, tam_painel_pixel, ponto_inicial, eixo_0, eixo_1):
+    for k in range(5):
+        p = ponto_inicial + k*(tam_painel_pixel[1]/4)*eixo_1
+        for _ in range(4):
+            if ponto_invalido(imagem, p[0], p[1]):
+                return False
+            p += (tam_painel_pixel[0]/2)*eixo_0
+    return True
 
 
 def desenha_painel(tam_painel_pixel, ponto_inicial, eixo_1, eixo_2):
@@ -145,36 +171,12 @@ def desenha_painel(tam_painel_pixel, ponto_inicial, eixo_1, eixo_2):
     plt.plot([p2[1], p0[1]], [p2[0], p0[0]], 'g')
 
 
-# def coloca_paines(caixa):
-#     ponto_incial = caixa[0]
-#     primeiro_ponto = ponto_incial
-
-#     altura = np.array(caixa[1]) - np.array(ponto_incial)
-#     largura = np.array(caixa[3]) - np.array(ponto_incial)
-
-#     num_linhas = int(magnitude(altura))
-#     num_colunas = int(magnitude(largura))
-
-#     num_paineis = 0
-
-#     for i in range(num_colunas):
-#         for j in range(num_linhas):
-#             if j % 2 == 0:
-#                 cor = "red"
-#             else:
-#                 cor = "green"
-
-
 def main():
     sys.setrecursionlimit(100000)
     imagem = cv2.imread('teste_rel_ia.png')
-    # print(imagem[150][150])
     segmentacao(imagem)
     plt.imshow(imagem)
     plt.show()
-
-    # lat = -22.328863	
-    # long = -49.1008054
 
     # roxo [84  1 68]
     # amarelo [ 36 231 253]
