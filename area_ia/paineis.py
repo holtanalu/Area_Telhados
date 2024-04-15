@@ -22,7 +22,7 @@ class Retangulo:
 def metros_para_pixels(valor_metros, lat_cen, zoom):
     circ_terra = 40075000
     metros_por_pixel = (np.cos(np.pi*lat_cen/180)*circ_terra)/(np.power(2, 8 + zoom))
-    print(metros_por_pixel*270)
+    print(metros_por_pixel*250)
     return valor_metros/metros_por_pixel
 
 
@@ -151,6 +151,8 @@ def segmentacao(imagem, tam_painel):
 def ponto_valido(imagem, x, y, cor):
     i = int(x)
     j = int(y)
+    if i < 0 or j < 0 or i >= len(imagem) or j >= len(imagem):
+        return False
     return imagem[i][j][0] == cor[0] and imagem[i][j][1] == cor[1] and imagem[i][j][2] == cor[2]
 
 
@@ -176,18 +178,24 @@ def desenha_painel(tam_painel_pixel, ponto_inicial, eixo_1, eixo_2):
 
 
 def main():
-    sys.setrecursionlimit(100000)
-    imagem = cv2.imread('teste.png')
-    alt_pixel = metros_para_pixels(ALTURA, -22.74522974584458, 18)
-    lar_pixel = metros_para_pixels(LARGURA, -22.74522974584458, 18)
-    tam_painel = np.array([alt_pixel, lar_pixel])
-    segmentacao(imagem, tam_painel)
-    plt.imshow(imagem)
-    plt.savefig("hospital_209.pdf")
-    plt.show()
-
-    # roxo [84  1 68]
-    # amarelo [ 36 231 253]
+    latitudes = [-21.7410705, -23.8232741, -23.5971845, -22.3785837, -23.4971439, -23.607451, -22.84698107, -21.2127249, \
+                    -23.6350871, -23.1611237, -22.4107652, -22.8036913, -23.190993, -21.1228628, -23.9573681, -22.3288635, \
+                    -22.7451994, -22.5786213, -23.4573537, -23.864518, -23.6434969, -23.2728059]
+    k = 0
+    for i in range(189, 216):
+        if i == 201 or i == 203 or i == 205 or i == 208 or i == 211:
+            continue
+        sys.setrecursionlimit(100000)
+        imagem = cv2.imread(f'res/res/hosp{i}.png')
+        alt_pixel = metros_para_pixels(ALTURA, latitudes[k], 18)
+        lar_pixel = metros_para_pixels(LARGURA, latitudes[k], 18)
+        tam_painel = np.array([alt_pixel, lar_pixel])
+        segmentacao(imagem, tam_painel)
+        plt.imshow(imagem)
+        plt.savefig(f"paineis/hospital{i}.pdf")
+        plt.close()
+        k += 1
+        # plt.show()
 
 
 if __name__ == "__main__":
