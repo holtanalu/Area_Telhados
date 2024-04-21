@@ -1,3 +1,4 @@
 /area_osm/chave_api_geocoding.py
-/area_ia/chave_api_static.py
+/area_ia/treinamento_ia/chave_api_static.py
+/area_ia/analise_ia/chave_api_nrel.py
 comandos.txt
